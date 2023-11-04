@@ -1,0 +1,72 @@
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+    <div class="container">
+        <a class="navbar-brand "
+            href="#">Dating app</a>
+
+        <ul class="navbar-nav me-auto mb-2 mb-md-0"
+            *ngIf="accountService.currentUser$ | async">
+            <li class="nav-item">
+                <a class="nav-link "
+                    href="#">Matches</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link"
+                    href="#">Lists</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link">Messages</a>
+            </li>
+        </ul>
+
+        <div class="dropdown"
+            *ngIf="accountService.currentUser$ | async"
+            dropdown>
+            <a dropdownToggle
+                class="dropdown-toggle text-light text-decoration-none">
+                Welcome user <span class="caret"></span>
+            </a>
+            <div id="dropdown-animated"
+                *dropdownMenu
+                class="dropdown-menu"
+                role="menu">
+
+                <a class="dropdown-item"
+                    href="#">Edit Profile</a>
+
+
+                <a class="dropdown-item"
+                    href="#">Another action
+                </a>
+
+
+                <a class="dropdown-item"
+                    (click)="logout()">Logout</a>
+
+            </div>
+        </div>
+
+        <form #loginForm="ngForm"
+            *ngIf="!(accountService.currentUser$ | async)"
+            (ngSubmit)="login()"
+            autocomplete="off"
+            class="d-flex">
+            <input name="username"
+                [(ngModel)]="model.username"
+                class="form-control me-2"
+                type="text"
+                placeholder="Username">
+            <input name="password"
+                [(ngModel)]="model.password"
+                class="form-control me-2"
+                type="password"
+                placeholder="Password">
+            <button class="btn btn-success"
+                style="margin-right: 10px;"
+                type="submit">Login</button>
+
+            <button class="btn btn-success"
+                onclick="logout()">logout</button>
+        </form>
+    </div>
+
+</nav>
