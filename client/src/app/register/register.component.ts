@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { AccountService } from '../_services/account.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-register',
@@ -12,7 +13,10 @@ export class RegisterComponent {
   /**
    *account service for api
    */
-  constructor(private accountService: AccountService) {}
+  constructor(
+    private accountService: AccountService,
+    private toastr: ToastrService
+  ) {}
   //child to parent we emit this value
   @Output() cancelRegister = new EventEmitter();
   model: any = {};
@@ -22,7 +26,10 @@ export class RegisterComponent {
       next: () => {
         this.cancel();
       },
-      error: (error) => console.log(error),
+      error: (error) => {
+        console.log(error);
+        this.toastr.error(error.error);
+      },
     });
   }
 
