@@ -13,7 +13,12 @@ import { ToastrService } from 'ngx-toastr';
 @Injectable()
 export class ErrorInterceptor implements HttpInterceptor {
   constructor(private router: Router, private toastR: ToastrService) {}
-
+  /**
+   * this intercepts our httprequests and api returns error we catch it and handle it by its code
+   * @param request
+   * @param next
+   * @returns  correct error
+   */
   intercept(
     request: HttpRequest<unknown>,
     next: HttpHandler
