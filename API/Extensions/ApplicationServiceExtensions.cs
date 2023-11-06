@@ -14,8 +14,11 @@ namespace API.Extensions
              opt.UseSqlite(config.GetConnectionString("DefaultConnection"));
          });
             services.AddCors();
+            //scope of http level
             services.AddScoped<ITokenService, TokenService>();
-
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IAccountRepository, AccountRepository>();
+           services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             return services;
         }
     }

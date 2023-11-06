@@ -1,5 +1,7 @@
+using API.Data;
 using API.Extensions;
 using API.Middleware;
+using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
@@ -20,5 +22,20 @@ app.UseAuthentication();
 //ok you have valid but what rights you have?
 app.UseAuthorization();
 app.MapControllers();
+using var scope = app.Services.CreateScope();
+var services = scope.ServiceProvider;
+try
+{
+    var context = services.GetRequiredService<DataContext>(); //get appUser
+    await context.Database.MigrateAsync();  //migrate data
+    await Seed.SeedUsers(context); //seed database
+}
+catch (Exception ex)
+{
+    var logger = services.GetService<ILogger<Program>>();
+    logger.LogError(ex, " An error occured during migration");
+
+};
+
 
 app.Run();

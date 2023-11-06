@@ -25,7 +25,7 @@ namespace API.Controllers
             if (user is null) return Unauthorized("Username does not exist");
 
             //reverse has with hmac key
-            using var hmac = new HMACSHA256(user.PasswordSalt);
+            using var hmac = new HMACSHA512(user.PasswordSalt);
             //we can compare 2 pws
             var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(loginDto.Password));
             for (int i = 0; i < computedHash.Length; i++)
@@ -47,7 +47,7 @@ namespace API.Controllers
 
             if (await UserExists(registerDto.Username)) return BadRequest("Username is taken");
             //hash the password, using = we want to auto dispose this hmac after complete, class is removed from memory
-            using var hmac = new HMACSHA256();
+            using var hmac = new HMACSHA512();
             var user = new AppUser
             {
                 UserName = registerDto.Username.ToLower(),
