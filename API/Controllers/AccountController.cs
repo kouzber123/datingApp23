@@ -21,7 +21,7 @@ namespace API.Controllers
         [HttpPost("login")]
         public async Task<ActionResult<UserDto>> Login(LoginDto loginDto)
         {
-            var user = await _dataContext.Users.FirstOrDefaultAsync(x => x.UserName == loginDto.Username);
+            var user = await _dataContext.Users.Include(p => p.Photos).FirstOrDefaultAsync(x => x.UserName == loginDto.Username);
             if (user is null) return Unauthorized("Username does not exist");
 
             //reverse has with hmac key
@@ -36,7 +36,9 @@ namespace API.Controllers
             var userDto = new UserDto
             {
                 UserName = user.UserName,
-                Token = _tokenService.CreateToken(user)
+                Token = _tokenService.CreateToken(user),
+                PhotoUrl = user.Photos.FirstOrDefault(x => x.IsMain)?.Url
+
             };
             return userDto;
         }
@@ -60,7 +62,8 @@ namespace API.Controllers
             var userDto = new UserDto
             {
                 UserName = user.UserName,
-                Token = _tokenService.CreateToken(user)
+                Token = _tokenService.CreateToken(user),
+                PhotoUrl = user.Photos.FirstOrDefault(x => x.IsMain)?.Url
             };
             return userDto;
 
