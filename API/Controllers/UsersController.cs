@@ -2,6 +2,7 @@ using System.Security.Claims;
 using API.DTOs;
 using API.Entities;
 using API.Extensions;
+using API.Helpers;
 using API.Interfaces;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
@@ -25,12 +26,22 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<MemberDto>>> GetUsers()
+        //we have to give hint where to look for params
+        public async Task<ActionResult<PagedList<MemberDto>>> GetUsers([FromQuery] UserParams userParams)
         {
+            //context of current user using this service
+            var currentUser = await _user.GetUserByUsernameAsync(User.GetUserName());
+            userParams.CurrentUsername = currentUser.UserName;
 
-            var users = await _user.GetMembersAsync();
+            if (string.IsNullOrEmpty(currentUser.UserName))
+            {
+                userParams.Gender = currentUser.Gender == "male" ? "female" : "male";
+            }
 
-            return Ok(users);
+            //Response = we intercept the http return with our addition, method works without this but we want to use this for navigation
+            var users = await _user.GetMembersAsync(userParams);
+            Response.AddPaginationHeader(new PaginationHeader(users.CurrentPage, users.PageSize, users.TotalCount, users.TotalPages));
+            return Ok(users); //and we send our paginated list
 
         }
 
@@ -120,12 +131,12 @@ namespace API.Controllers
             if (photo.IsMain) return BadRequest("Cannot remove main photo, change main photo first");
             if (photo.PublicId != null)
             {
-              var result = await _photoService.DeletePhotoAsync(photo.PublicId);
-              if(result.Error != null) return BadRequest(result.Error.Message);
+                var result = await _photoService.DeletePhotoAsync(photo.PublicId);
+                if (result.Error != null) return BadRequest(result.Error.Message);
             }
             user.Photos.Remove(photo);
 
-            if(await _user.SaveAllAsync()) return Ok();
+            if (await _user.SaveAllAsync()) return Ok();
 
             return BadRequest("Problem Deleting photo");
         }

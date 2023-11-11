@@ -32,11 +32,11 @@
         <div class="dropdown"
             *ngIf="(accountService.currentUser$ | async) as user"
             dropdown>
-            <img src="{{user?.photoUrl || './assets/user.png'}}"
+            <img src="{{user.photoUrl || './assets/user.png'}}"
                 alt="photo of user">
             <a dropdownToggle
                 class="dropdown-toggle text-light text-decoration-none ms-2">
-                Welcome {{user.userName}} <span class="caret"></span>
+                Welcome {{user.knownAs}} <span class="caret"></span>
             </a>
             <div id="dropdown-animated"
                 *dropdownMenu

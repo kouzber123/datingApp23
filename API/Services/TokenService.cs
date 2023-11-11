@@ -20,7 +20,8 @@ namespace API.Services
         {
             var claims = new List<Claim>{
                 //what user claims that their usernaem is theirs
-            new(JwtRegisteredClaimNames.NameId, user.UserName)
+            new(JwtRegisteredClaimNames.NameId, user.Id.ToString()),
+            new(JwtRegisteredClaimNames.UniqueName, user.UserName),
            };
 
 
