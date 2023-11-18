@@ -11,8 +11,6 @@ namespace API.Extensions
     {
         public static IServiceCollection AddIdentityServices(this IServiceCollection services, IConfiguration config)
         {
-
-
             services.AddIdentityCore<AppUser>(opt =>
             {
                 opt.Password.RequireNonAlphanumeric = false;
@@ -33,6 +31,24 @@ namespace API.Extensions
                    ValidateIssuer = false,
                    ValidateAudience = false,
 
+               };
+
+               opt.Events = new JwtBearerEvents
+               {
+                   OnMessageReceived = context =>
+                   {
+                       var accessToken = context.Request.Query["acess_token"];
+
+                       var path = context.HttpContext.Request.Path;
+                       if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hubs"))
+                       {
+                           //THIS gives our signalR access to token
+                           context.Token = accessToken;
+
+                       }
+
+                       return Task.CompletedTask;
+                   }
                };
            });
 

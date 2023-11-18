@@ -1,5 +1,4 @@
-<div class="row"
-    >
+<div class="row">
 
     <div class="col-4">
         <div class="card">
@@ -8,6 +7,10 @@
                 class="card-img-top img-thumbnail">
 
             <div class="card-body">
+                <div class="mb-2"
+                    *ngIf="(presenceService.onlineUsers$ |async)?.includes(member.userName)">
+                    <i class="class fa fa-user-circle text-success"></i> Online now
+                </div>
                 <div>
                     <strong>Location:</strong>
                     <p>{{member.city}}, {{member.country}}</p>
@@ -18,7 +21,7 @@
                 </div>
                 <div>
                     <strong>Last active:</strong>
-                    <p>{{member.lastActive + "Z" | timeago}}</p>
+                    <p>{{member.lastActive | timeago}}</p>
                 </div>
                 <div>
                     <strong>Member since:</strong>
@@ -28,7 +31,8 @@
             <div class="card-footer">
                 <div class="btn-group d-flex">
                     <button class="btn btn-dark">Like</button>
-                    <button class="btn btn-success" (click)="selectTab('Messages')">Messages</button>
+                    <button class="btn btn-success"
+                        (click)="selectTab('Messages')">Messages</button>
                 </div>
             </div>
         </div>
@@ -59,7 +63,7 @@
             <tab heading="Messages"
                 (selectTab)="onTabActivated($event)">
 
-                <app-member-messages [messages]="messages" [username]="member.userName"></app-member-messages>
+                <app-member-messages [username]="member.userName"></app-member-messages>
             </tab>
         </tabset>
     </div>
