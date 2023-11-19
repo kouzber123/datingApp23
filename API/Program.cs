@@ -5,19 +5,21 @@ using API.Middleware;
 using API.SignalR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
+
+// Add services to the container.
 
 builder.Services.AddControllers();
 builder.Services.AddApplicationServices(builder.Configuration);
 builder.Services.AddIdentityServices(builder.Configuration);
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-string connString;
+
+var connString = "";
 if (builder.Environment.IsDevelopment())
     connString = builder.Configuration.GetConnectionString("DefaultConnection");
 else
 {
-    // Use connection string provided at runtime by flyIO
+    // Use connection string provided at runtime by FlyIO.
     var connUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
 
     // Parse connection URL to connection string for Npgsql
@@ -38,46 +40,44 @@ builder.Services.AddDbContext<DataContext>(opt =>
 {
     opt.UseNpgsql(connString);
 });
+
 var app = builder.Build();
+
+// Configure the HTTP request pipeline.
 app.UseMiddleware<ExceptionMiddleware>();
-app.UseHttpsRedirection();
-//configure https pipeline
-app.UseCors(opt =>
-{
-    opt.AllowAnyHeader().AllowAnyMethod().AllowCredentials().WithOrigins("https://localhost:4200");
-});
-//do u have valid token
+
+app.UseCors(builder => builder
+    .AllowAnyHeader()
+    .AllowAnyMethod()
+    .AllowCredentials()
+    .WithOrigins("https://localhost:4200"));
+
 app.UseAuthentication();
-//ok you have valid but what rights you have?
 app.UseAuthorization();
 
-//to serve static files
 app.UseDefaultFiles();
-app.UseStaticFiles(); //fish out wwwroot index file
+app.UseStaticFiles();
 
 app.MapControllers();
 app.MapHub<PresenceHub>("hubs/presence");
 app.MapHub<MessageHub>("hubs/message");
-
 app.MapFallbackToController("Index", "Fallback");
+
 using var scope = app.Services.CreateScope();
 var services = scope.ServiceProvider;
 try
 {
-    var context = services.GetRequiredService<DataContext>(); //get appUser
-
+    var context = services.GetRequiredService<DataContext>();
     var userManager = services.GetRequiredService<UserManager<AppUser>>();
     var roleManager = services.GetRequiredService<RoleManager<AppRole>>();
-    await context.Database.MigrateAsync();  //migrate data
+    await context.Database.MigrateAsync();
     await Seed.ClearConnections(context);
-    await Seed.SeedUsers(userManager, roleManager); //seed database
+    await Seed.SeedUsers(userManager, roleManager);
 }
 catch (Exception ex)
 {
     var logger = services.GetService<ILogger<Program>>();
-    logger.LogError(ex, " An error occured during migration");
-
-};
-
+    logger.LogError(ex, "An error occured during migration");
+}
 
 app.Run();
