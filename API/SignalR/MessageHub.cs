@@ -44,7 +44,7 @@ namespace API.SignalR
 
             //sender and recipient names
             var messages = await _unitOfWork.MessageRepository.GetMessageThread(Context.User.GetUserName(), otherUser);
-            if(_unitOfWork.HasChanges()) await _unitOfWork.Complete();
+            if (_unitOfWork.HasChanges()) await _unitOfWork.Complete();
             //when user connects instead of api call to messages, user will receive messages from signalR
 
             //we should send indiviaully the message thread not to whole group
@@ -109,8 +109,12 @@ namespace API.SignalR
             {
                 //url new message and return mapped message
                 await Clients.Group(groupName).SendAsync("NewMessage", _mapper.Map<MessageDto>(message));
-            };
-            throw new HubException("Couldnt send the message");
+            }
+            else
+            {
+                throw new HubException("Couldnt send the message");
+            }
+
         }
         private static string GetGroupName(string caller, string other)
         {
@@ -132,8 +136,12 @@ namespace API.SignalR
             //we add connetion to our connection list
             group.Connections.Add(connection);
             if (await _unitOfWork.Complete()) return group;
+            else
+            {
+                throw new HubException("Failed to add to group");
 
-            throw new HubException("Failed to add to group");
+            }
+
         }
         private async Task<Group> RemoveFromMessageGroup()
         {

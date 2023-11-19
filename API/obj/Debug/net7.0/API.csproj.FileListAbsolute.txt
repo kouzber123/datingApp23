@@ -80,3 +80,6 @@ C:\Users\tomng\DatingApp23\API\bin\Debug\net7.0\Microsoft.AspNetCore.Identity.En
 C:\Users\tomng\DatingApp23\API\bin\Debug\net7.0\Microsoft.Extensions.Identity.Core.dll
 C:\Users\tomng\DatingApp23\API\bin\Debug\net7.0\Microsoft.Extensions.Identity.Stores.dll
 C:\Users\tomng\DatingApp23\API\bin\Debug\net7.0\Microsoft.Extensions.Options.dll
+C:\Users\tomng\DatingApp23\API\bin\Debug\net7.0\API.staticwebassets.runtime.json
+C:\Users\tomng\DatingApp23\API\bin\Debug\net7.0\Npgsql.dll
+C:\Users\tomng\DatingApp23\API\bin\Debug\net7.0\Npgsql.EntityFrameworkCore.PostgreSQL.dll
