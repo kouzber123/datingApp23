@@ -18,19 +18,17 @@ namespace API.Extensions
             services.AddCors();
             //scope of http level dies afgter call
             services.AddScoped<ITokenService, TokenService>();
-            services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IAccountRepository, AccountRepository>();
             services.AddScoped<IPhotoService, PhotoService>();
-            services.AddScoped<ILikesRepository, LikesRepository>();
-            services.AddScoped<IMessageRepository, MessageRepository>();
             services.AddScoped<LogUserActivity>();
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddSignalR();
-
             //singleton = server wide life cycle does not die after http request
             services.AddSingleton<PresenceTracker>();
             //section alt for connection string
             services.Configure<CloudinarySettings>(config.GetSection("CloudinarySettings"));
+
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
             return services;
         }
     }

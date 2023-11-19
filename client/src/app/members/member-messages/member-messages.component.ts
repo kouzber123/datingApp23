@@ -1,12 +1,13 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, Input, NgModule, ViewChild } from '@angular/core';
+import { Component, OnInit, Input, NgModule, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { TimeagoModule } from 'ngx-timeago';
-import { Message } from 'src/app/_models/message';
 import { MessageService } from 'src/app/_services/message.service';
 
 @Component({
+
   selector: 'app-member-messages',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './member-messages.component.html',
   styleUrls: ['./member-messages.component.css'],
   standalone: true,
@@ -14,7 +15,6 @@ import { MessageService } from 'src/app/_services/message.service';
 })
 export class MemberMessagesComponent implements OnInit {
   @ViewChild('messageForm') messageForm?: NgForm;
-
   @Input() username?: string;
   messageContent = '';
   //we get our messages straight from the service signalR

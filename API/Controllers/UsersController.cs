@@ -15,12 +15,14 @@ namespace API.Controllers
         private readonly IMapper _mapper;
         private readonly IPhotoService _photoService;
 
-        private readonly IUserRepository _user;
-        public UsersController(IUserRepository user, IMapper mapper, IPhotoService photoService)
+        private readonly IUnitOfWork _unitOfWork;
+
+        public UsersController(IMapper mapper, IPhotoService photoService, IUnitOfWork unitOfWork)
         {
+            this._unitOfWork = unitOfWork;
             _photoService = photoService;
             _mapper = mapper;
-            _user = user;
+
 
         }
 
@@ -29,16 +31,16 @@ namespace API.Controllers
         public async Task<ActionResult<PagedList<MemberDto>>> GetUsers([FromQuery] UserParams userParams)
         {
             //context of current user using this service
-            var currentUser = await _user.GetUserByUsernameAsync(User.GetUserName());
-            userParams.CurrentUsername = currentUser.UserName;
+            var gender = await _unitOfWork.UserRepository.GetUserGender(User.GetUserName());
+            userParams.CurrentUsername = User.GetUserName();
 
-            if (string.IsNullOrEmpty(currentUser.UserName))
+            if (string.IsNullOrEmpty(userParams.Gender))
             {
-                userParams.Gender = currentUser.Gender == "male" ? "female" : "male";
+                userParams.Gender = gender == "male" ? "female" : "male";
             }
 
             //Response = we intercept the http return with our addition, method works without this but we want to use this for navigation
-            var users = await _user.GetMembersAsync(userParams);
+            var users = await _unitOfWork.UserRepository.GetMembersAsync(userParams);
             Response.AddPaginationHeader(new PaginationHeader(users.CurrentPage, users.PageSize, users.TotalCount, users.TotalPages));
             return Ok(users); //and we send our paginated list
 
@@ -47,7 +49,7 @@ namespace API.Controllers
         [HttpGet("{username}")]
         public async Task<ActionResult<MemberDto>> GetUser(string username)
         {
-            return await _user.GetMemberAsync(username);
+            return await _unitOfWork.UserRepository.GetMemberAsync(username);
 
         }
 
@@ -57,12 +59,12 @@ namespace API.Controllers
         {
             //claimTypes come directly  from JWT
 
-            var user = await _user.GetUserByUsernameAsync(User.GetUserName());
+            var user = await _unitOfWork.UserRepository.GetUserByUsernameAsync(User.GetUserName());
 
             if (user is null) return NotFound();
 
             _mapper.Map(memberUpdateDto, user);
-            if (await _user.SaveAllAsync()) return NoContent();
+            if (await _unitOfWork.Complete()) return NoContent();
 
             return BadRequest("Failed to update user");
         }
@@ -72,7 +74,7 @@ namespace API.Controllers
         {
             //update user photo list
 
-            var user = await _user.GetUserByUsernameAsync(User.GetUserName());
+            var user = await _unitOfWork.UserRepository.GetUserByUsernameAsync(User.GetUserName());
             if (user is null) return NotFound();
 
             var result = await _photoService.AddPhotoAsync(file);
@@ -89,7 +91,7 @@ namespace API.Controllers
 
             user.Photos.Add(photo); //entity is tracking now this in memory
 
-            if (await _user.SaveAllAsync())
+            if (await _unitOfWork.Complete())
             {
                 return CreatedAtAction(nameof(GetUser), new { username = user.UserName }, _mapper.Map<PhotoDto>(photo));
             }; //<to> and (from)
@@ -104,7 +106,7 @@ namespace API.Controllers
         public async Task<ActionResult> SetMainPhoto(int photoId)
         {
 
-            var user = await _user.GetUserByUsernameAsync(User.GetUserName());
+            var user = await _unitOfWork.UserRepository.GetUserByUsernameAsync(User.GetUserName());
             if (user is null) return NotFound();
 
             var photo = user.Photos.FirstOrDefault(x => x.Id == photoId);
@@ -116,14 +118,14 @@ namespace API.Controllers
             if (currentMain != null) currentMain.IsMain = false;
             photo.IsMain = true;
 
-            if (await _user.SaveAllAsync()) return NoContent();
+            if (await _unitOfWork.Complete()) return NoContent();
 
             return BadRequest("Problem Setting the main photo");
         }
         [HttpDelete("delete-photo/{photoId}")]
         public async Task<ActionResult> DeletePhoto(int photoId)
         {
-            var user = await _user.GetUserByUsernameAsync(User.GetUserName());
+            var user = await _unitOfWork.UserRepository.GetUserByUsernameAsync(User.GetUserName());
             var photo = user.Photos.FirstOrDefault(x => x.Id == photoId);
 
             if (photo == null) return NotFound();
@@ -135,7 +137,7 @@ namespace API.Controllers
             }
             user.Photos.Remove(photo);
 
-            if (await _user.SaveAllAsync()) return Ok();
+            if (await _unitOfWork.Complete()) return Ok();
 
             return BadRequest("Problem Deleting photo");
         }

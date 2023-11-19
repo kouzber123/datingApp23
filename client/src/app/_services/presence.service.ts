@@ -48,7 +48,7 @@ export class PresenceService {
       this.toastR
         .info(
           'You received Message from ' +
-            sender.username +
+            sender.userName +
             ' known as ' +
             sender.knownAs
         )
@@ -56,7 +56,7 @@ export class PresenceService {
         .subscribe({
           next: () => {
             this.router.navigateByUrl(
-              '/members/' + sender.username + '?tab=Messages'
+              '/members/' + sender.userName + '?tab=Messages'
             );
           },
         });
