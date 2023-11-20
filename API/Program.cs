@@ -11,8 +11,6 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
-builder.Services.AddApplicationServices(builder.Configuration);
-builder.Services.AddIdentityServices(builder.Configuration);
 
 string connString;
 if (builder.Environment.IsDevelopment())
@@ -38,10 +36,13 @@ else
 }
 builder.Services.AddDbContext<DataContext>(opt =>
 {
-
     opt.UseNpgsql(connString);
 });
 Console.WriteLine(connString);
+
+builder.Services.AddApplicationServices(builder.Configuration);
+builder.Services.AddIdentityServices(builder.Configuration);
+
 var app = builder.Build();
 app.UseDefaultFiles();
 app.UseStaticFiles();
@@ -54,6 +55,7 @@ app.UseCors(builder => builder
     .AllowCredentials()
     .WithOrigins("https://localhost:4200"));
 
+app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
@@ -66,12 +68,11 @@ app.MapFallbackToController("Index", "Fallback");
 
 using var scope = app.Services.CreateScope();
 var services = scope.ServiceProvider;
+var context = services.GetRequiredService<DataContext>();
+var userManager = services.GetRequiredService<UserManager<AppUser>>();
+var roleManager = services.GetRequiredService<RoleManager<AppRole>>();
 try
 {
-
-    var context = services.GetRequiredService<DataContext>();
-    var userManager = services.GetRequiredService<UserManager<AppUser>>();
-    var roleManager = services.GetRequiredService<RoleManager<AppRole>>();
     await context.Database.MigrateAsync();
     await Seed.ClearConnections(context);
     await Seed.SeedUsers(userManager, roleManager);
