@@ -19,7 +19,7 @@ between Github and fly.IO, using git actions
 * this should improve readability
 
 ###live app at
-* https://gambitapp.fly.dev/
+* https://datingapp23.fly.dev/
 * you can register or using dummy data:
 * username: lisa
 * password: Pa$$w0rd
