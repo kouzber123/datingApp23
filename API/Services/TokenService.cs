@@ -16,7 +16,7 @@ namespace API.Services
         public TokenService(IConfiguration config, UserManager<AppUser> userManager)
         {
             this._userManager = userManager;
-            _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["TokenKey"]));
+            _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["JWTSettings:TokenKey"]));
         }
 
         public async Task <string> CreateToken(AppUser user)
