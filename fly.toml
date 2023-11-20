@@ -1,4 +1,4 @@
-# fly.toml app configuration file generated for datingapp23 on 2023-11-19T23:58:20+02:00
+# fly.toml app configuration file generated for datingapp23 on 2023-11-20T08:29:55+02:00
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
@@ -8,10 +8,12 @@ primary_region = "arn"
 
 [build]
   image = "kouzber/datingapp:latest"
+
 [env]
   ASPNETCORE_URLS = "http://+:8080"
-  CloudinarySettings__CloudName="dwzezw9q4"
-  CloudinarySettings__ApiKey="897833627454673"
+  CloudinarySettings__ApiKey = "897833627454673"
+  CloudinarySettings__CloudName = "dwzezw9q4"
+
 [http_service]
   internal_port = 8080
   force_https = true
