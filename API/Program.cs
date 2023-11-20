@@ -42,7 +42,7 @@ else
     var pgPort = pgHostPort.Split(":")[1];
     var updatedHost = pgHost.Replace("flycast", "internal");
 
-    connString = $"Server=datingapp2.internal;Port=5432;User Id=postgres;Password=DcyAsirACWfGCcq;Database=datingapp2;";
+    connString = builder.Configuration.GetConnectionString("FlyConnection");
 }
 builder.Services.AddDbContext<DataContext>(opt =>
 {

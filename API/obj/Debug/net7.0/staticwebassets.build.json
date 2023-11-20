@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "vEUApKxhlrWyyO58cIvEM32fqnuaQ88iHgGeI1TDQ3o=",
+  "Hash": "OSFPeUXdwxx+818zLnLNsQlQFN+gnC22l6Fl/7Y2I/c=",
   "Source": "API",
   "BasePath": "_content/API",
   "Mode": "Default",
@@ -170,12 +170,12 @@
       "OriginalItemSpec": "wwwroot\\index.html"
     },
     {
-      "Identity": "C:\\Users\\tomng\\DatingApp23\\API\\wwwroot\\main.d9837a609f3920ff.js",
+      "Identity": "C:\\Users\\tomng\\DatingApp23\\API\\wwwroot\\main.9dd6f2d4fb66ebe2.js",
       "SourceId": "API",
       "SourceType": "Discovered",
       "ContentRoot": "C:\\Users\\tomng\\DatingApp23\\API\\wwwroot\\",
       "BasePath": "_content/API",
-      "RelativePath": "main.d9837a609f3920ff.js",
+      "RelativePath": "main.9dd6f2d4fb66ebe2.js",
       "AssetKind": "All",
       "AssetMode": "All",
       "AssetRole": "Primary",
@@ -184,7 +184,7 @@
       "AssetTraitValue": "",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot\\main.d9837a609f3920ff.js"
+      "OriginalItemSpec": "wwwroot\\main.9dd6f2d4fb66ebe2.js"
     },
     {
       "Identity": "C:\\Users\\tomng\\DatingApp23\\API\\wwwroot\\polyfills.a95b1126cd114971.js",
