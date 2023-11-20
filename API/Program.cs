@@ -43,7 +43,8 @@ builder.Services.AddDbContext<DataContext>(opt =>
 });
 Console.WriteLine(connString);
 var app = builder.Build();
-
+app.UseDefaultFiles();
+app.UseStaticFiles();
 // Configure the HTTP request pipeline.
 app.UseMiddleware<ExceptionMiddleware>();
 
@@ -56,8 +57,7 @@ app.UseCors(builder => builder
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseDefaultFiles();
-app.UseStaticFiles();
+
 
 app.MapControllers();
 app.MapHub<PresenceHub>("hubs/presence");
